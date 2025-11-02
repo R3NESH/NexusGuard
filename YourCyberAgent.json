@@ -1,0 +1,112 @@
+{
+  "name": "YourCyberAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2c667c08-aa64-4403-8d9c-d9fb714db3b3",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1856,
+        224
+      ],
+      "id": "faf03029-a892-4c98-a060-e5a830dbabdb",
+      "name": "Webhook",
+      "webhookId": "2c667c08-aa64-4403-8d9c-d9fb714db3b3"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are a friendly cybersecurity assistant. Your task is to write *only the body* of an email to a student. Do not include a subject line or any other text before or after the email.\n\nThe student's name is: {{ $json.body.fullName }}\nThey just submitted their personal data (like their email and student ID) to a fake job application as part of a cybersecurity simulation.\n\nYour email must:\n1.  Start *directly* with \"Hi {{ $json.body.fullName }},\"\n2.  Be 3-5 paragraphs long.\n3.  **Paragraph 1:** Thank them for participating in the simulation. Briefly mention that in this \"attack,\" they submitted personal data, which is exactly what real scammers want.\n4.  **Paragraph 2:** Give them the first tip: to be suspicious of job or scholarship offers that seem \"too good to be true.\" Mention fake websites and use emojis. 🚩\n5.  **Paragraph 3:** Give them the second tip: to always protect their personal data (like addresses, mobile numbers, or CGPA) and to double-check the URL before entering it. 🔒\n6.  **Paragraph 4:** As a bonus tip, suggest they add an extra layer of safety by using a reputable browser extension. Mention examples like **Bitdefender TrafficLight** (which shows if links are safe) or **uBlock Origin** (which blocks malicious ads and trackers). 🛡️\n7.  **Final Paragraph:** End with a positive, encouraging message, thanking them for helping everyone learn."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        2080,
+        224
+      ],
+      "id": "e46db08a-c94d-4ae7-b46c-89894e408573",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DUIIh7UmJuYx5QQd",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').first().json.body.email }}",
+        "subject": "We Have Your Information!!!",
+        "message": "={{ $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2432,
+        224
+      ],
+      "id": "a8864f8f-f6e4-437b-81c8-7907c997e7b4",
+      "name": "Send a message",
+      "webhookId": "a7bbc5ad-a6f7-4ca0-87b2-621621645ec0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "N6dGApHM4lm6RHII",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "95c5fc23-c6fc-41cb-9bb7-032f48d4880d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bf8c0c8294772f077d48b84a9dea8275548fd2c161578712e9016f9e78a4b26b"
+  },
+  "id": "msEFkDSwnqrGtplB",
+  "tags": []
+}
