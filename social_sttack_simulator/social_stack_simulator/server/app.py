@@ -14,7 +14,8 @@ load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
-CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
+# NEW - Correct path matching
+CORS(app, resources={r"/api/.*": {"origins": "*"}}, supports_credentials=True)
 
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
@@ -319,7 +320,8 @@ def generate_phishing():
         }}
         """
 
-        model = genai.GenerativeModel('models/gemini-3-4b-it')
+      # NEW - Correct model
+        model = genai.GenerativeModel('gemini-2.5-pro')
         response = model.generate_content(master_prompt)
         
         cleaned_text = response.text.strip().replace("`", "")
